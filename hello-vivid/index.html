@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hello, vivid — from idea to shareable URL in one step</title>
+<meta name="description" content="The first vivid-html artifact: a tour of how an idea becomes a single-file HTML page, published to GitHub Pages, and returned as a link.">
+<meta name="vivid:created" content="2026-05-10">
+<style>
+  :root {
+    --ivory:  #FAF9F5;
+    --paper:  #FFFFFF;
+    --slate:  #141413;
+    --clay:   #D97757;
+    --clay-d: #B85C3E;
+    --oat:    #E3DACC;
+    --olive:  #788C5D;
+    --rust:   #B04A3F;
+    --g100:   #F0EEE6;
+    --g200:   #E6E3DA;
+    --g300:   #D1CFC5;
+    --g500:   #87867F;
+    --g700:   #3D3D3A;
+    --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+    --sans:  system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono:  ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--ivory);
+    color: var(--slate);
+    font-family: var(--sans);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 32px 140px; }
+
+  header.masthead {
+    padding: 80px 0 56px;
+    border-bottom: 1.5px solid var(--g300);
+    margin-bottom: 12px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--g500);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .eyebrow::before { content: ""; width: 24px; height: 1.5px; background: var(--clay); }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(38px, 5.4vw, 62px);
+    line-height: 1.06;
+    letter-spacing: -0.018em;
+    margin: 0 0 8px;
+    max-width: 17ch;
+  }
+  h1 em { font-style: italic; color: var(--clay); }
+  .intro {
+    font-size: 16.5px;
+    color: var(--g700);
+    margin: 22px 0 0;
+    max-width: 620px;
+  }
+  .intro a { color: var(--clay); text-decoration-color: var(--oat); text-underline-offset: 3px; }
+  .intro code { font-family: var(--mono); font-size: 0.9em; background: var(--g100); padding: 1px 6px; border-radius: 4px; }
+
+  .hero-grid { display: grid; grid-template-columns: 1fr 340px; gap: 48px; align-items: end; }
+  @media (max-width: 880px) { .hero-grid { grid-template-columns: 1fr; } }
+
+  .hero-fig { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: end; }
+  @media (max-width: 880px) { .hero-fig { max-width: 400px; margin-top: 28px; } }
+  .hero-fig .pane {
+    border-radius: 10px;
+    border: 1.5px solid var(--g300);
+    background: var(--paper);
+    padding: 14px;
+    aspect-ratio: 4/5;
+    display: flex; flex-direction: column; gap: 7px;
+    position: relative;
+  }
+  .hero-fig .pane.md   { background: var(--g100); transform: rotate(-2.5deg) translateY(6px); }
+  .hero-fig .pane.html { transform: rotate(1.5deg); border-color: var(--slate); box-shadow: 0 12px 32px rgba(20,20,19,.10); }
+  .hero-fig .tag {
+    position: absolute; top: -10px; left: 12px;
+    font-family: var(--mono); font-size: 9.5px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    background: var(--ivory); padding: 2px 7px;
+    border: 1.5px solid var(--g300); border-radius: 6px; color: var(--g500);
+  }
+  .hero-fig .pane.html .tag { border-color: var(--slate); color: var(--slate); }
+  .hero-fig .l { height: 6px; border-radius: 3px; background: var(--g300); }
+  .hero-fig .l.w90 { width: 90%; } .hero-fig .l.w75 { width: 75%; } .hero-fig .l.w60 { width: 60%; }
+  .hero-fig .l.w82 { width: 82%; } .hero-fig .l.w70 { width: 70%; } .hero-fig .l.w50 { width: 50%; }
+  .hero-fig .pane.html .l { background: var(--g200); }
+  .hero-fig .pane.html .blk {
+    border-radius: 5px; flex: 1;
+    background: linear-gradient(135deg, var(--oat), #ECE1CF);
+    position: relative; overflow: hidden;
+  }
+  .hero-fig .pane.html .blk::after {
+    content: ""; position: absolute; left: 18%; right: 18%; top: 28%; height: 40%;
+    border: 2px solid var(--clay); border-radius: 50%; opacity: .7;
+  }
+
+  section { margin-top: 72px; scroll-margin-top: 28px; }
+  .sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 10px; }
+  .sec-head .idx {
+    font-family: var(--mono); font-size: 13px; color: var(--clay);
+    font-weight: 600; width: 34px; flex-shrink: 0;
+  }
+  .sec-head h2 {
+    font-family: var(--serif); font-weight: 500; font-size: 27px;
+    margin: 0; letter-spacing: -0.012em;
+  }
+  .sec-head .count {
+    font-family: var(--mono); font-size: 11px; color: var(--g500);
+    background: var(--g100); padding: 2px 8px; border-radius: 999px;
+  }
+  .sec-intro {
+    font-size: 14.5px; color: var(--g700);
+    max-width: 700px; margin: 0 0 24px 50px;
+  }
+  @media (max-width: 640px) { .sec-intro { margin-left: 0; } }
+
+  /* Step strip */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-left: 50px;
+  }
+  @media (max-width: 640px) { .steps { margin-left: 0; } }
+  .step {
+    background: var(--paper);
+    border: 1.5px solid var(--g300);
+    border-radius: 14px;
+    padding: 22px 22px 20px;
+    position: relative;
+    transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+  }
+  .step:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(20, 20, 19, 0.10);
+    border-color: var(--slate);
+  }
+  .step .n {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--clay); margin-bottom: 10px;
+  }
+  .step h3 {
+    font-family: var(--serif); font-weight: 500; font-size: 18px;
+    margin: 0 0 8px; letter-spacing: -0.008em;
+  }
+  .step p { font-size: 13.5px; color: var(--g700); line-height: 1.5; margin: 0; }
+  .step .arrow {
+    position: absolute; right: -14px; top: 50%; transform: translateY(-50%);
+    color: var(--g300); font-family: var(--mono); font-size: 14px;
+    background: var(--ivory); padding: 0 4px;
+  }
+  @media (max-width: 880px) { .step .arrow { display: none; } }
+
+  /* Diagram strip */
+  .diagram {
+    margin: 28px 0 0 50px;
+    background: var(--paper);
+    border: 1.5px solid var(--g300);
+    border-radius: 14px;
+    padding: 28px;
+  }
+  @media (max-width: 640px) { .diagram { margin-left: 0; } }
+  .diagram svg { display: block; width: 100%; height: auto; max-height: 220px; overflow: visible; }
+  .diagram svg .st { stroke: var(--g500); fill: none; stroke-width: 2.5; }
+  .diagram svg .fl { fill: var(--g300); }
+  .diagram svg .cl { fill: var(--clay); }
+  .diagram svg .ol { fill: var(--olive); }
+  .diagram svg .oa { fill: var(--oat); stroke: var(--g500); stroke-width: 2.5; }
+  .diagram svg .sl { fill: var(--slate); }
+  .diagram svg .wh { fill: var(--paper); stroke: var(--g500); stroke-width: 2.5; }
+  .diagram svg .ln { stroke: var(--g500); stroke-width: 2.5; fill: none; stroke-linecap: round; }
+  .diagram svg .lc { stroke: var(--clay); stroke-width: 2.5; fill: none; stroke-linecap: round; }
+  .diagram svg .da { stroke-dasharray: 4 4; }
+  .diagram svg text {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
+    text-transform: uppercase; fill: var(--g500);
+  }
+  .diagram svg text.lbl-clay { fill: var(--clay); }
+
+  /* Code-ish chip row */
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 24px 0 0 50px; }
+  @media (max-width: 640px) { .chips { margin-left: 0; } }
+  .chip {
+    padding: 6px 12px; border-radius: 8px;
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--paper); border: 1.5px solid var(--g300); color: var(--g700);
+  }
+  .chip.ok { background: rgba(120,140,93,0.10); border-color: rgba(120,140,93,0.45); color: var(--olive); }
+  .chip.cl { background: rgba(217,119,87,0.12); border-color: rgba(217,119,87,0.55); color: var(--clay-d); }
+
+  /* Hard constraints list */
+  .rules {
+    margin-left: 50px;
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  @media (max-width: 640px) { .rules { margin-left: 0; } }
+  .rules li {
+    background: var(--paper);
+    border: 1.5px solid var(--g300);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13.5px;
+    color: var(--g700);
+    line-height: 1.45;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .rules li::before {
+    content: "✓";
+    color: var(--clay);
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .rules li code {
+    font-family: var(--mono); font-size: 0.88em;
+    background: var(--g100); padding: 1px 5px; border-radius: 4px;
+    color: var(--slate);
+  }
+
+  footer {
+    margin-top: 100px;
+    border-top: 1.5px solid var(--g300);
+    padding-top: 36px;
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 20px; flex-wrap: wrap;
+    font-size: 13px; color: var(--g500);
+  }
+  footer .k { font-family: var(--serif); font-style: italic; color: var(--g700); font-size: 15px; }
+  footer a { color: var(--clay); text-decoration-color: var(--oat); text-underline-offset: 3px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">First page · proof of concept</div>
+        <h1>From idea to <em>link</em>, in one step.</h1>
+        <p class="intro">
+          You said it in chat; I rendered it into one self-contained <code>.html</code>;
+          a script pushed it to <a href="https://github.com/bbbond123/vivid-html">bbbond123/vivid-html</a>;
+          GitHub Pages served it back as the URL in your address bar. No build, no app, no login —
+          just a link you can forward.
+        </p>
+      </div>
+      <div class="hero-fig" aria-hidden="true">
+        <div class="pane md">
+          <span class="tag">.md</span>
+          <span class="l w90"></span><span class="l w75"></span><span class="l w82"></span>
+          <span class="l w60"></span><span class="l w90"></span><span class="l w70"></span>
+          <span class="l w82"></span><span class="l w50"></span>
+        </div>
+        <div class="pane html">
+          <span class="tag">.html</span>
+          <span class="l w60"></span>
+          <span class="blk"></span>
+          <span class="l w75"></span><span class="l w50"></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="flow">
+    <div class="sec-head">
+      <span class="idx">01</span>
+      <h2>The flow</h2>
+      <span class="count">5 steps</span>
+    </div>
+    <p class="sec-intro">
+      Markdown gets you a wall of text someone has to read top-to-bottom. A page gets you something
+      shaped — typography, layout, hover states. The skill bridges the two. Here's what happens
+      between "make me a page" and the link landing in your hand.
+    </p>
+    <div class="steps">
+      <div class="step">
+        <div class="n">01 · Brief</div>
+        <h3>You hand me an idea</h3>
+        <p>A topic, a brainstorm, a thread. Concrete enough that I can name an audience and three facts.</p>
+        <span class="arrow">→</span>
+      </div>
+      <div class="step">
+        <div class="n">02 · Slug</div>
+        <h3>I pick a kebab-case slug</h3>
+        <p>Six words or fewer, derived from the topic. The URL you'll share is built from it.</p>
+        <span class="arrow">→</span>
+      </div>
+      <div class="step">
+        <div class="n">03 · Render</div>
+        <h3>One file, ivory and clay</h3>
+        <p>Tokens copied verbatim. Serif headlines, mono eyebrows, SVG that obeys the class system.</p>
+        <span class="arrow">→</span>
+      </div>
+      <div class="step">
+        <div class="n">04 · Publish</div>
+        <h3><code>publish.sh</code> commits and pushes</h3>
+        <p>Index regenerates with a card for the new page. GitHub Pages picks up the change in a minute or two.</p>
+        <span class="arrow">→</span>
+      </div>
+      <div class="step">
+        <div class="n">05 · Link</div>
+        <h3>You get a URL back</h3>
+        <p>Forward it to anyone. They open it; the typography does the rest.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="pipeline">
+    <div class="sec-head">
+      <span class="idx">02</span>
+      <h2>The pipeline, on one line</h2>
+      <span class="count">diagram</span>
+    </div>
+    <p class="sec-intro">
+      No CI, no orchestration. <code>bin/publish.sh</code> is one bash file with one Python heredoc.
+      The contract is: feed it a slug, it returns a URL. That's the whole interface.
+    </p>
+    <div class="diagram" aria-hidden="true">
+      <svg viewBox="0 0 760 160">
+        <!-- Idea -->
+        <rect class="wh" x="10" y="50" width="120" height="60" rx="10"/>
+        <text x="70" y="78" text-anchor="middle">CHAT</text>
+        <text x="70" y="94" text-anchor="middle" class="lbl-clay">IDEA</text>
+
+        <!-- arrow -->
+        <line class="lc" x1="138" y1="80" x2="180" y2="80"/>
+        <polyline class="lc" points="172,74 180,80 172,86" fill="none"/>
+
+        <!-- vivid-html skill -->
+        <rect class="oa" x="190" y="40" width="160" height="80" rx="10"/>
+        <text x="270" y="68" text-anchor="middle">VIVID-HTML SKILL</text>
+        <text x="270" y="86" text-anchor="middle">RENDER &amp;</text>
+        <text x="270" y="102" text-anchor="middle">VALIDATE META</text>
+
+        <!-- arrow -->
+        <line class="lc" x1="358" y1="80" x2="400" y2="80"/>
+        <polyline class="lc" points="392,74 400,80 392,86" fill="none"/>
+
+        <!-- publish.sh -->
+        <rect class="cl" x="410" y="40" width="160" height="80" rx="10"/>
+        <text x="490" y="68" text-anchor="middle" fill="#FAF9F5">PUBLISH.SH</text>
+        <text x="490" y="86" text-anchor="middle" fill="#FAF9F5">REINDEX · COMMIT</text>
+        <text x="490" y="102" text-anchor="middle" fill="#FAF9F5">PUSH</text>
+
+        <!-- arrow -->
+        <line class="lc" x1="578" y1="80" x2="620" y2="80"/>
+        <polyline class="lc" points="612,74 620,80 612,86" fill="none"/>
+
+        <!-- Pages URL -->
+        <rect class="wh" x="630" y="50" width="120" height="60" rx="10"/>
+        <text x="690" y="78" text-anchor="middle">GITHUB</text>
+        <text x="690" y="94" text-anchor="middle" class="lbl-clay">PAGES URL</text>
+
+        <!-- regen index dotted feedback -->
+        <line class="ln da" x1="490" y1="120" x2="490" y2="148"/>
+        <line class="ln da" x1="270" y1="148" x2="490" y2="148"/>
+        <line class="ln da" x1="270" y1="148" x2="270" y2="120"/>
+        <text x="380" y="142" text-anchor="middle">INDEX REGEN</text>
+      </svg>
+    </div>
+    <div class="chips">
+      <span class="chip ok">no build step</span>
+      <span class="chip ok">no js framework</span>
+      <span class="chip cl">one .html, one URL</span>
+      <span class="chip">single python heredoc</span>
+    </div>
+  </section>
+
+  <section id="constraints">
+    <div class="sec-head">
+      <span class="idx">03</span>
+      <h2>Why every page looks the same</h2>
+      <span class="count">10 rules</span>
+    </div>
+    <p class="sec-intro">
+      The look isn't taste — it's a checklist. The skill validates each item before the script
+      will publish. Removing any one of them breaks the family resemblance, so they're not optional.
+    </p>
+    <ul class="rules">
+      <li>One file. No <code>&lt;link&gt;</code>, no <code>&lt;script src&gt;</code>.</li>
+      <li><code>&lt;title&gt;</code>, <code>description</code>, <code>vivid:created</code> in <code>&lt;head&gt;</code>.</li>
+      <li>Palette is the seven warm tokens — ivory, clay, oat, olive, slate, plus three grays.</li>
+      <li>Serif for h1/h2/titles. Sans for body. Mono for eyebrows and labels.</li>
+      <li>h1 uses <code>clamp(38px, 5.4vw, 62px)</code> with one italic clay <code>&lt;em&gt;</code>.</li>
+      <li>Mono labels are uppercase, 11–13px, with letter-spacing 0.08–0.12em.</li>
+      <li>Container <code>.wrap</code> caps at 1120px with 32px horizontal padding.</li>
+      <li>SVG uses the class system: <code>.st .fl .cl .ol .oa .sl .wh .ln .lc .da</code>.</li>
+      <li>Hover lifts cards by <code>translateY(-3px)</code> with a 150ms transition.</li>
+      <li>Footer humanizes: it acknowledges the page is itself the artifact.</li>
+    </ul>
+  </section>
+
+  <section id="next">
+    <div class="sec-head">
+      <span class="idx">04</span>
+      <h2>What's next</h2>
+      <span class="count">soon</span>
+    </div>
+    <p class="sec-intro">
+      Right now the loop closes through Claude Code on a laptop. The next milestone is closing it
+      through Telegram: text the bot a brief, get a vivid URL back. The contract is already in
+      place — <code>publish.sh</code> emits <code>URL: …</code> as its last line, and a future bot just
+      forwards that into the chat.
+    </p>
+  </section>
+
+  <footer>
+    <span class="k">Everything on this page is itself a single .html file.</span>
+    <span>Powered by <a href="https://github.com/bbbond123/vivid-html">vivid-html</a>.</span>
+  </footer>
+
+</div>
+</body>
+</html>
