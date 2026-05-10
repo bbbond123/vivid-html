@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Define-first 的三层闭环 — 把"先定义"变成可重入的方法论</title>
+  <meta name="description" content="Define-first 方法论的三层闭环：10 行模板补完、Plan 模式倒推、healthcheck 兜底——三种触发条件、三个补救点、互为兜底安全网。">
+  <meta name="vivid:created" content="2026-05-11">
+  <style>
+    :root {
+      /* ── Palette: warm earth ───────────────────────── */
+      --ivory:  #FAF9F5;
+      --paper:  #FFFFFF;
+      --slate:  #141413;
+      --clay:   #D97757;
+      --clay-d: #B85C3E;
+      --oat:    #E3DACC;
+      --olive:  #788C5D;
+      --rust:   #B04A3F;
+
+      /* ── Neutrals ─────────────────────────────────── */
+      --g100: #F0EEE6;
+      --g200: #E6E3DA;
+      --g300: #D1CFC5;
+      --g500: #87867F;
+      --g700: #3D3D3A;
+
+      /* ── Typography stacks ────────────────────────── */
+      --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+      --sans:  system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --mono:  ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--ivory);
+      color: var(--slate);
+      font-family: var(--sans);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 32px 140px; }
+
+    /* ── Masthead ─────────────────────────────────── */
+    header.masthead {
+      padding: 80px 0 56px;
+      border-bottom: 1.5px solid var(--g300);
+      margin-bottom: 12px;
+    }
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--g500);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 24px; height: 1.5px;
+      background: var(--clay);
+    }
+    h1 {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: clamp(38px, 5.4vw, 62px);
+      line-height: 1.06;
+      letter-spacing: -0.018em;
+      margin: 0 0 8px;
+      max-width: 17ch;
+    }
+    h1 em { font-style: italic; color: var(--clay); }
+    .intro {
+      font-size: 16.5px;
+      color: var(--g700);
+      margin: 22px 0 0;
+      max-width: 640px;
+    }
+    .intro a { color: var(--clay); text-decoration-color: var(--oat); text-underline-offset: 3px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 48px;
+      align-items: end;
+    }
+    @media (max-width: 880px) { .hero-grid { grid-template-columns: 1fr; } }
+
+    .hero-fig { position: relative; height: 260px; }
+    .hero-fig .pane {
+      position: absolute;
+      border-radius: 10px;
+      border: 1.5px solid var(--g300);
+      background: var(--paper);
+      padding: 14px 16px;
+      width: 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .hero-fig .pane .tag {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--g500);
+      margin-bottom: 4px;
+    }
+    .hero-fig .pane .row {
+      height: 5px; border-radius: 3px; background: var(--g300);
+    }
+    .hero-fig .pane .row.w90 { width: 90%; }
+    .hero-fig .pane .row.w70 { width: 70%; }
+    .hero-fig .pane .row.w55 { width: 55%; }
+    .hero-fig .pane .row.cl  { background: var(--clay); }
+    .hero-fig .pane.p1 { top: 0;    left: 0;   transform: rotate(-3deg); background: var(--g100); }
+    .hero-fig .pane.p2 { top: 60px; left: 60px; transform: rotate(1.5deg); border-color: var(--slate); box-shadow: 0 12px 32px rgba(20,20,19,.10); }
+    .hero-fig .pane.p3 { top: 130px; left: 110px; transform: rotate(-1deg); }
+    .hero-fig .pane.p3 .tag { color: var(--clay-d); }
+
+    /* ── TOC pills ────────────────────────────────── */
+    nav.toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 26px 0 0;
+    }
+    nav.toc a {
+      font-size: 12.5px;
+      padding: 7px 14px;
+      border: 1.5px solid var(--g300);
+      border-radius: 999px;
+      text-decoration: none;
+      color: var(--g700);
+      background: var(--paper);
+      transition: border-color 120ms, color 120ms, background 120ms;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+    nav.toc a .n { font-family: var(--mono); font-size: 10px; color: var(--g500); }
+    nav.toc a:hover { border-color: var(--slate); color: var(--slate); }
+    nav.toc a:hover .n { color: var(--clay); }
+
+    /* ── Sections ─────────────────────────────────── */
+    section { margin-top: 72px; scroll-margin-top: 28px; }
+    .sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 10px; }
+    .sec-head .idx {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--clay);
+      font-weight: 600;
+      width: 34px;
+      flex-shrink: 0;
+    }
+    .sec-head h2 {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: 27px;
+      margin: 0;
+      letter-spacing: -0.012em;
+    }
+    .sec-head .count {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--g500);
+      background: var(--g100);
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+    .sec-intro {
+      font-size: 14.5px;
+      color: var(--g700);
+      max-width: 720px;
+      margin: 0 0 24px 50px;
+    }
+    @media (max-width: 640px) { .sec-intro { margin-left: 0; } }
+
+    /* ── Card grid ────────────────────────────────── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(316px, 1fr));
+      gap: 20px;
+      margin-left: 50px;
+    }
+    @media (max-width: 640px) { .grid { margin-left: 0; } }
+
+    a.card {
+      display: flex;
+      flex-direction: column;
+      background: var(--paper);
+      border: 1.5px solid var(--g300);
+      border-radius: 14px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+      overflow: hidden;
+    }
+    a.card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(20, 20, 19, 0.10);
+      border-color: var(--slate);
+    }
+
+    .thumb {
+      height: 132px;
+      background: var(--g100);
+      border-bottom: 1.5px solid var(--g200);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      transition: background 150ms ease;
+    }
+    a.card:hover .thumb { background: var(--oat); }
+    .thumb svg { width: 100%; height: 100%; overflow: visible; }
+
+    .body { padding: 18px 20px 16px; display: flex; flex-direction: column; flex: 1; }
+    .title {
+      font-family: var(--serif);
+      font-size: 19px;
+      font-weight: 500;
+      line-height: 1.22;
+      color: var(--slate);
+      margin-bottom: 7px;
+      letter-spacing: -0.008em;
+    }
+    .desc {
+      font-size: 13.5px;
+      color: var(--g700);
+      line-height: 1.5;
+      margin-bottom: 16px;
+      flex: 1;
+    }
+    .file {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--g500);
+      border-top: 1px solid var(--g100);
+      padding-top: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .file .arrow { transition: transform 150ms ease; color: var(--g300); }
+    a.card:hover .file { color: var(--clay); }
+    a.card:hover .file .arrow { transform: translateX(3px); color: var(--clay); }
+
+    /* ── SVG class system (component-snippets §6) ─── */
+    svg .st { stroke: var(--g500); fill: none; stroke-width: 2.5; }
+    svg .fl { fill: var(--g300); }
+    svg .cl { fill: var(--clay); }
+    svg .ol { fill: var(--olive); }
+    svg .oa { fill: var(--oat); stroke: var(--g500); stroke-width: 2.5; }
+    svg .sl { fill: var(--slate); }
+    svg .wh { fill: var(--paper); stroke: var(--g500); stroke-width: 2.5; }
+    svg .ln { stroke: var(--g500); stroke-width: 2.5; fill: none; stroke-linecap: round; }
+    svg .lc { stroke: var(--clay); stroke-width: 2.5; fill: none; stroke-linecap: round; }
+    svg .da { stroke-dasharray: 4 4; }
+    svg .rs { stroke: var(--rust); stroke-width: 2.5; fill: none; stroke-linecap: round; }
+    a.card:hover .thumb svg .fl { fill: var(--g500); }
+    a.card:hover .thumb svg .oa { fill: var(--paper); }
+
+    /* ── Loop diagram (section 03) ────────────────── */
+    .diagram {
+      margin: 0 0 0 50px;
+      background: var(--paper);
+      border: 1.5px solid var(--g300);
+      border-radius: 14px;
+      padding: 36px 28px 28px;
+      position: relative;
+    }
+    @media (max-width: 640px) { .diagram { margin-left: 0; padding: 24px 16px; } }
+    .diagram svg { width: 100%; height: auto; display: block; }
+    .diagram .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--g100);
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--g500);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .diagram .legend .item { display: inline-flex; align-items: center; gap: 8px; }
+    .diagram .legend .swatch { width: 14px; height: 2px; background: var(--g500); }
+    .diagram .legend .swatch.cl { background: var(--clay); }
+    .diagram .legend .swatch.da {
+      background: repeating-linear-gradient(90deg, var(--g500) 0 4px, transparent 4px 8px);
+    }
+
+    /* ── Trigger table (section 04) ───────────────── */
+    .triggers {
+      margin-left: 50px;
+      border: 1.5px solid var(--g300);
+      border-radius: 14px;
+      background: var(--paper);
+      overflow: hidden;
+    }
+    @media (max-width: 640px) { .triggers { margin-left: 0; } }
+    .triggers .row {
+      display: grid;
+      grid-template-columns: 1fr 180px;
+      gap: 24px;
+      padding: 18px 22px;
+      border-top: 1px solid var(--g100);
+      align-items: center;
+    }
+    .triggers .row:first-child { border-top: none; }
+    @media (max-width: 640px) {
+      .triggers .row { grid-template-columns: 1fr; gap: 10px; padding: 16px; }
+    }
+    .triggers .signal {
+      font-size: 14.5px;
+      color: var(--g700);
+    }
+    .triggers .signal .quote {
+      font-family: var(--serif);
+      font-style: italic;
+      color: var(--slate);
+    }
+    .chip {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      justify-self: end;
+    }
+    @media (max-width: 640px) { .chip { justify-self: start; } }
+    .chip.template  { background: rgba(120,140,93,0.10); border: 1.5px solid rgba(120,140,93,0.45); color: var(--olive); }
+    .chip.rewind    { background: var(--oat); color: var(--g700); border: 1.5px solid var(--g300); }
+    .chip.healthck  { background: rgba(217,119,87,0.12); border: 1.5px solid rgba(217,119,87,0.55); color: var(--clay-d); }
+    .chip.refuse    { background: rgba(176,74,63,0.10); border: 1.5px solid rgba(176,74,63,0.55); color: var(--rust); }
+
+    /* ── Footer ───────────────────────────────────── */
+    footer {
+      margin-top: 100px;
+      border-top: 1.5px solid var(--g300);
+      padding-top: 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 20px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: var(--g500);
+    }
+    footer .k { font-family: var(--serif); font-style: italic; color: var(--g700); font-size: 15px; }
+    footer a { color: var(--clay); text-decoration-color: var(--oat); text-underline-offset: 3px; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">Define-first · methodology</div>
+        <h1>Define-first 的 <em>三层闭环</em></h1>
+        <p class="intro">
+          单点定义经常失败——因为我们跳过、漂移、或者忘了回头看。把"定义"拆成三层：启动时补完模板、半路用 Plan 倒推、每个里程碑回头校准。三个口子，互为兜底。
+        </p>
+        <nav class="toc">
+          <a href="#failures">三种失败 <span class="n">01</span></a>
+          <a href="#loop">三层闭环 <span class="n">02</span></a>
+          <a href="#diagram">闭环咬合 <span class="n">03</span></a>
+          <a href="#triggers">触发时机 <span class="n">04</span></a>
+        </nav>
+      </div>
+      <div class="hero-fig" aria-hidden="true">
+        <div class="pane p1">
+          <span class="tag">Layer 1 · 模板</span>
+          <span class="row w90"></span>
+          <span class="row w70"></span>
+          <span class="row w55"></span>
+        </div>
+        <div class="pane p2">
+          <span class="tag">Layer 2 · Plan 倒推</span>
+          <span class="row w90"></span>
+          <span class="row cl w70"></span>
+        </div>
+        <div class="pane p3">
+          <span class="tag">Layer 3 · Healthcheck</span>
+          <span class="row w70"></span>
+          <span class="row cl w55"></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="failures">
+    <div class="sec-head">
+      <span class="idx">01</span>
+      <h2>三种失败模式</h2>
+      <span class="count">3 种崩塌</span>
+    </div>
+    <p class="sec-intro">
+      不是"定义"不重要，是单一动作太脆弱。"先定义再动手"在以下三种情形下都会失守——这也是为什么需要三层。
+    </p>
+    <div class="grid">
+      <a class="card" href="#loop">
+        <div class="thumb">
+          <svg viewBox="0 0 120 80">
+            <rect class="wh" x="10" y="18" width="34" height="44" rx="3"/>
+            <line class="ln" x1="16" y1="28" x2="38" y2="28"/>
+            <line class="ln" x1="16" y1="36" x2="34" y2="36"/>
+            <line class="ln" x1="16" y1="44" x2="38" y2="44"/>
+            <line class="ln" x1="16" y1="52" x2="32" y2="52"/>
+            <path class="lc da" d="M50 40 Q66 18 90 40"/>
+            <polygon class="cl" points="86,35 96,40 86,45"/>
+            <rect class="cl" x="78" y="40" width="28" height="22" rx="3"/>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="title">跳过定义直接动手</div>
+          <div class="desc">"先写起来再说"——走到一半才发现成功标准没人对齐，回头返工的成本比一开始定义高十倍。</div>
+          <div class="file"><span>failure · skip-define</span><span class="arrow">→</span></div>
+        </div>
+      </a>
+
+      <a class="card" href="#loop">
+        <div class="thumb">
+          <svg viewBox="0 0 120 80">
+            <line class="ln" x1="14" y1="58" x2="44" y2="58"/>
+            <path class="lc" d="M44 58 Q60 58 70 50 T96 22"/>
+            <circle class="cl" cx="96" cy="22" r="4"/>
+            <circle class="ol" cx="44" cy="58" r="4"/>
+            <line class="ln da" x1="44" y1="58" x2="106" y2="58"/>
+            <text x="50" y="72" font-family="ui-monospace, monospace" font-size="8" fill="#87867F" letter-spacing="0.08em">EXPECTED</text>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="title">边做边偏</div>
+          <div class="desc">工具的诱惑、需求的微调、范围在没人察觉的时候悄悄膨胀——直到某一刻发现，已经不是当初要做的那件事了。</div>
+          <div class="file"><span>failure · scope-drift</span><span class="arrow">→</span></div>
+        </div>
+      </a>
+
+      <a class="card" href="#loop">
+        <div class="thumb">
+          <svg viewBox="0 0 120 80">
+            <rect class="wh" x="14" y="14" width="92" height="14" rx="3"/>
+            <rect class="oa" x="20" y="18" width="6" height="6" rx="1"/>
+            <line class="ln" x1="32" y1="21" x2="80" y2="21"/>
+            <rect class="wh" x="14" y="33" width="92" height="14" rx="3"/>
+            <rect class="oa" x="20" y="37" width="6" height="6" rx="1"/>
+            <line class="ln da" x1="32" y1="40" x2="74" y2="40"/>
+            <rect class="wh" x="14" y="52" width="92" height="14" rx="3"/>
+            <rect class="cl" x="20" y="56" width="6" height="6" rx="1"/>
+            <line class="lc da" x1="32" y1="59" x2="62" y2="59"/>
+            <text x="92" y="63" font-family="ui-monospace, monospace" font-size="11" fill="#B04A3F" font-weight="600">?</text>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="title">"差不多就行"</div>
+          <div class="desc">验收等于"功能完成"。"清晰"、"快"、"易用"——这些模糊词没量化，最后没人能说清楚做没做到。</div>
+          <div class="file"><span>failure · vague-acceptance</span><span class="arrow">→</span></div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section id="loop">
+    <div class="sec-head">
+      <span class="idx">02</span>
+      <h2>三层闭环</h2>
+      <span class="count">3 层</span>
+    </div>
+    <p class="sec-intro">
+      每一层对应一个时机：开始之前、半路察觉、阶段交接。任何一环漏了，下一环还能接住——这才是闭环，不是流水线。
+    </p>
+    <div class="grid">
+      <a class="card" href="#diagram">
+        <div class="thumb">
+          <svg viewBox="0 0 120 80">
+            <rect class="wh" x="22" y="10" width="76" height="60" rx="4"/>
+            <line class="lc" x1="28" y1="18" x2="34" y2="18"/>
+            <line class="ln" x1="28" y1="26" x2="34" y2="26"/>
+            <line class="ln" x1="28" y1="34" x2="34" y2="34"/>
+            <line class="ln" x1="28" y1="42" x2="34" y2="42"/>
+            <line class="ln" x1="28" y1="50" x2="34" y2="50"/>
+            <line class="ln" x1="28" y1="58" x2="34" y2="58"/>
+            <line class="ln" x1="38" y1="18" x2="92" y2="18"/>
+            <line class="ln" x1="38" y1="26" x2="86" y2="26"/>
+            <line class="ln" x1="38" y1="34" x2="90" y2="34"/>
+            <line class="ln" x1="38" y1="42" x2="82" y2="42"/>
+            <line class="ln" x1="38" y1="50" x2="88" y2="50"/>
+            <line class="ln" x1="38" y1="58" x2="78" y2="58"/>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="title">10 行模板补完</div>
+          <div class="desc">前置防御。动手之前回答十行：用户、问题、成功标准、验收方式、范围、非目标、风险、依赖、时间、第一步——填不满就不能开工。</div>
+          <div class="file"><span>layer 1 · template</span><span class="arrow">→</span></div>
+        </div>
+      </a>
+
+      <a class="card" href="#diagram">
+        <div class="thumb">
+          <svg viewBox="0 0 120 80">
+            <rect class="oa" x="64" y="18" width="44" height="44" rx="4"/>
+            <line class="ln" x1="70" y1="28" x2="98" y2="28"/>
+            <line class="ln" x1="70" y1="36" x2="92" y2="36"/>
+            <line class="ln" x1="70" y1="44" x2="100" y2="44"/>
+            <line class="ln" x1="70" y1="52" x2="88" y2="52"/>
+            <rect class="wh" x="14" y="22" width="36" height="36" rx="3"/>
+            <line class="lc" x1="20" y1="32" x2="44" y2="32"/>
+            <line class="lc" x1="20" y1="40" x2="40" y2="40"/>
+            <line class="lc" x1="20" y1="48" x2="42" y2="48"/>
+            <path class="lc" d="M62 40 L52 40"/>
+            <polygon class="cl" points="56,36 50,40 56,44"/>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="title">Plan 模式倒推</div>
+          <div class="desc">中段补救。已经动手却发现说不清成功标准？切到 Plan 模式，把代码反推回需求层、把假设暴露出来，重新对齐再继续。</div>
+          <div class="file"><span>layer 2 · plan-rewind</span><span class="arrow">→</span></div>
+        </div>
+      </a>
+
+      <a class="card" href="#diagram">
+        <div class="thumb">
+          <svg viewBox="0 0 120 80">
+            <line class="ln" x1="8" y1="40" x2="22" y2="40"/>
+            <path class="lc" d="M22 40 L28 40 L32 24 L38 56 L44 32 L50 48 L54 40 L60 40"/>
+            <line class="ln" x1="60" y1="40" x2="74" y2="40"/>
+            <path class="lc" d="M74 40 L80 40 L84 28 L90 52 L94 36 L98 44 L102 40 L114 40"/>
+            <circle class="cl" cx="32" cy="24" r="2.5"/>
+            <circle class="cl" cx="84" cy="28" r="2.5"/>
+            <circle class="ol" cx="38" cy="56" r="2.5"/>
+            <circle class="ol" cx="90" cy="52" r="2.5"/>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="title">Healthcheck 兜底</div>
+          <div class="desc">持续校准。每完成一个里程碑，回到 10 行模板复诊：成功标准有没有偏？范围有没有膨胀？风险有没有新增？发现就回到 Layer 1 重写。</div>
+          <div class="file"><span>layer 3 · healthcheck</span><span class="arrow">→</span></div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section id="diagram">
+    <div class="sec-head">
+      <span class="idx">03</span>
+      <h2>闭环如何咬合</h2>
+    </div>
+    <p class="sec-intro">
+      三层不是串联，是三个相互兜底的检查点。下面是它们与"执行"之间的咬合关系——任意一层失守，另两层会把你拉回来。
+    </p>
+    <div class="diagram">
+      <svg viewBox="0 0 720 360" role="img" aria-label="define-first 三层闭环咬合示意图">
+        <!-- nodes -->
+        <rect class="wh" x="280" y="20" width="160" height="64" rx="10"/>
+        <text x="360" y="48" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="17" fill="#141413" font-weight="500">10 行模板</text>
+        <text x="360" y="68" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#87867F" letter-spacing="0.1em">LAYER 1 · 启动</text>
+
+        <rect class="oa" x="290" y="148" width="140" height="60" rx="10"/>
+        <text x="360" y="174" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="17" fill="#141413" font-weight="500">执 行</text>
+        <text x="360" y="192" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#3D3D3A" letter-spacing="0.1em">CODE · TOOLS · DECISIONS</text>
+
+        <rect class="wh" x="40" y="270" width="180" height="64" rx="10"/>
+        <text x="130" y="298" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="17" fill="#141413" font-weight="500">Plan 模式倒推</text>
+        <text x="130" y="318" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#87867F" letter-spacing="0.1em">LAYER 2 · 中段补救</text>
+
+        <rect class="wh" x="500" y="270" width="180" height="64" rx="10"/>
+        <text x="590" y="298" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="17" fill="#141413" font-weight="500">Healthcheck</text>
+        <text x="590" y="318" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#87867F" letter-spacing="0.1em">LAYER 3 · 持续校准</text>
+
+        <!-- arrow defs -->
+        <defs>
+          <marker id="arrow-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path class="fl" d="M0 0 L10 5 L0 10 z"/>
+          </marker>
+          <marker id="arrow-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path class="cl" d="M0 0 L10 5 L0 10 z"/>
+          </marker>
+        </defs>
+
+        <!-- 1 → 执行 (启动) -->
+        <line class="ln" x1="360" y1="84" x2="360" y2="142" marker-end="url(#arrow-g)"/>
+        <text x="372" y="118" font-family="ui-monospace, monospace" font-size="10" fill="#87867F" letter-spacing="0.08em">启 动</text>
+
+        <!-- 执行 → Plan 倒推 (漂移) -->
+        <path class="lc" d="M290 200 Q220 230 200 268" fill="none" marker-end="url(#arrow-c)"/>
+        <text x="186" y="248" font-family="ui-monospace, monospace" font-size="10" fill="#B85C3E" letter-spacing="0.08em">说不清了</text>
+
+        <!-- 执行 → Healthcheck (里程碑) -->
+        <path class="ln" d="M430 200 Q500 230 520 268" fill="none" marker-end="url(#arrow-g)"/>
+        <text x="496" y="248" font-family="ui-monospace, monospace" font-size="10" fill="#87867F" letter-spacing="0.08em">里程碑</text>
+
+        <!-- Plan 倒推 → 10 行模板 (回去重写) -->
+        <path class="lc da" d="M130 270 Q130 140 280 60" fill="none" marker-end="url(#arrow-c)"/>
+        <text x="60" y="170" font-family="ui-monospace, monospace" font-size="10" fill="#B85C3E" letter-spacing="0.08em">回到模板</text>
+        <text x="60" y="184" font-family="ui-monospace, monospace" font-size="10" fill="#B85C3E" letter-spacing="0.08em">重新对齐</text>
+
+        <!-- Healthcheck → 10 行模板 (定义偏了 → 重写) -->
+        <path class="lc da" d="M590 270 Q590 140 440 60" fill="none" marker-end="url(#arrow-c)"/>
+        <text x="608" y="170" font-family="ui-monospace, monospace" font-size="10" fill="#B85C3E" letter-spacing="0.08em">定义已偏</text>
+        <text x="608" y="184" font-family="ui-monospace, monospace" font-size="10" fill="#B85C3E" letter-spacing="0.08em">回到模板</text>
+
+        <!-- Plan 倒推 → 执行 (修正后继续) -->
+        <path class="ln" d="M220 290 Q260 250 290 200" fill="none" marker-end="url(#arrow-g)"/>
+        <text x="234" y="284" font-family="ui-monospace, monospace" font-size="10" fill="#87867F" letter-spacing="0.08em">修正后继续</text>
+
+        <!-- Healthcheck → 执行 (无问题 → 继续) -->
+        <path class="ln" d="M500 290 Q460 250 430 200" fill="none" marker-end="url(#arrow-g)"/>
+        <text x="446" y="284" font-family="ui-monospace, monospace" font-size="10" fill="#87867F" letter-spacing="0.08em">无偏移 · 继续</text>
+      </svg>
+      <div class="legend">
+        <span class="item"><span class="swatch"></span>正常流转</span>
+        <span class="item"><span class="swatch cl"></span>触发补救</span>
+        <span class="item"><span class="swatch da"></span>回到 Layer 1 重写</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="triggers">
+    <div class="sec-head">
+      <span class="idx">04</span>
+      <h2>触发时机</h2>
+      <span class="count">5 信号</span>
+    </div>
+    <p class="sec-intro">
+      怎么知道该用哪一层？看用户输入或自己当前状态发出的信号——不同信号，不同入口。
+    </p>
+    <div class="triggers">
+      <div class="row">
+        <div class="signal"><span class="quote">"做一个 X" / "想做 X" / "加一个功能" / "新项目"</span> ——开启新工作的语句。</div>
+        <span class="chip template">→ 10 行模板</span>
+      </div>
+      <div class="row">
+        <div class="signal">写到一半发现：成功标准说不清、范围模糊、用户和场景对不上号。</div>
+        <span class="chip rewind">→ Plan 倒推</span>
+      </div>
+      <div class="row">
+        <div class="signal">完成了一个阶段或里程碑，要继续推进下一段。</div>
+        <span class="chip healthck">→ Healthcheck</span>
+      </div>
+      <div class="row">
+        <div class="signal"><span class="quote">"先写起来再说" / "边做边想" / "把 XX 工具接进来玩玩"</span> ——绕过定义的反模式。</div>
+        <span class="chip refuse">拒绝 → 回到 10 行</span>
+      </div>
+      <div class="row">
+        <div class="signal">发现自己在堆技术名词、对工具的兴趣盖过了对问题的理解。</div>
+        <span class="chip refuse">拒绝 → 回到第 4 行核心问题</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="k">这一页本身也是把"我对这套方法论的定义"做了一次 define-first。</span>
+    <span>Powered by <a href="https://github.com/bbbond123/vivid-html">vivid-html</a>.</span>
+  </footer>
+
+</div>
+</body>
+</html>
