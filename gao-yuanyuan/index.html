@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>高圆圆 — 一九七九，北京的中秋</title>
+  <meta name="description" content="高圆圆个人页：1979年10月5日生于北京市丰台区，恰逢中秋。属羊，年柱己未，月柱癸酉，纳音天上火。">
+  <meta name="vivid:created" content="2026-05-12">
+  <style>
+    :root {
+      /* ── Palette: warm earth ───────────────────────── */
+      --ivory:  #FAF9F5;
+      --paper:  #FFFFFF;
+      --slate:  #141413;
+      --clay:   #D97757;
+      --clay-d: #B85C3E;
+      --oat:    #E3DACC;
+      --olive:  #788C5D;
+      --rust:   #B04A3F;
+
+      /* ── Neutrals ─────────────────────────────────── */
+      --g100: #F0EEE6;
+      --g200: #E6E3DA;
+      --g300: #D1CFC5;
+      --g500: #87867F;
+      --g700: #3D3D3A;
+
+      /* ── Typography stacks ────────────────────────── */
+      --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+      --sans:  system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --mono:  ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--ivory);
+      color: var(--slate);
+      font-family: var(--sans);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 32px 140px; }
+
+    /* ── Masthead ─────────────────────────────────── */
+    header.masthead {
+      padding: 80px 0 56px;
+      border-bottom: 1.5px solid var(--g300);
+      margin-bottom: 12px;
+    }
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--g500);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 24px; height: 1.5px;
+      background: var(--clay);
+    }
+    h1 {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: clamp(38px, 5.4vw, 62px);
+      line-height: 1.06;
+      letter-spacing: -0.018em;
+      margin: 0 0 8px;
+      max-width: 17ch;
+    }
+    h1 em { font-style: italic; color: var(--clay); }
+    .intro {
+      font-size: 16.5px;
+      color: var(--g700);
+      margin: 22px 0 0;
+      max-width: 620px;
+    }
+    .intro a { color: var(--clay); text-decoration-color: var(--oat); text-underline-offset: 3px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 48px;
+      align-items: end;
+    }
+    @media (max-width: 880px) { .hero-grid { grid-template-columns: 1fr; } }
+
+    /* ── Hero figure: moon + calendar card ────────── */
+    .hero-fig {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items: end;
+    }
+    .hero-fig .pane {
+      border-radius: 10px;
+      border: 1.5px solid var(--g300);
+      background: var(--paper);
+      padding: 14px;
+      aspect-ratio: 4/5;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      position: relative;
+    }
+    .hero-fig .pane.lunar {
+      background: var(--g100);
+      transform: rotate(-2.5deg) translateY(6px);
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-fig .pane.greg {
+      transform: rotate(1.5deg);
+      border-color: var(--slate);
+      box-shadow: 0 12px 32px rgba(20,20,19,.10);
+    }
+    .hero-fig .tag {
+      position: absolute;
+      top: -10px; left: 12px;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--ivory);
+      padding: 2px 7px;
+      border: 1.5px solid var(--g300);
+      border-radius: 6px;
+      color: var(--g500);
+    }
+    .hero-fig .pane.greg .tag { border-color: var(--slate); color: var(--slate); }
+    .hero-fig .moon {
+      width: 78px; height: 78px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #FDFBF3, #E9DDC3 70%, #C9B68F);
+      box-shadow: 0 4px 16px rgba(180,140,80,0.22), inset -8px -8px 18px rgba(170,130,70,0.18);
+    }
+    .hero-fig .pane.lunar .moon-label {
+      font-family: var(--serif);
+      font-size: 22px;
+      color: var(--g700);
+      margin-top: 14px;
+      letter-spacing: 0.04em;
+    }
+    .hero-fig .cal-top {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--clay);
+      text-align: center;
+      border-bottom: 1.5px solid var(--g300);
+      padding-bottom: 6px;
+    }
+    .hero-fig .cal-day {
+      font-family: var(--serif);
+      font-size: 64px;
+      font-weight: 500;
+      color: var(--slate);
+      text-align: center;
+      margin-top: 6px;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .hero-fig .cal-sub {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--g500);
+      text-align: center;
+      margin-top: 6px;
+    }
+
+    /* ── Nav toc pills ────────────────────────────── */
+    nav.toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 26px 0 0;
+    }
+    nav.toc a {
+      font-size: 12.5px;
+      padding: 7px 14px;
+      border: 1.5px solid var(--g300);
+      border-radius: 999px;
+      text-decoration: none;
+      color: var(--g700);
+      background: var(--paper);
+      transition: border-color 120ms, color 120ms, background 120ms;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+    nav.toc a .n { font-family: var(--mono); font-size: 10px; color: var(--g500); }
+    nav.toc a:hover { border-color: var(--slate); color: var(--slate); }
+    nav.toc a:hover .n { color: var(--clay); }
+
+    /* ── Sections ─────────────────────────────────── */
+    section { margin-top: 72px; scroll-margin-top: 28px; }
+    .sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 10px; }
+    .sec-head .idx {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--clay);
+      font-weight: 600;
+      width: 34px;
+      flex-shrink: 0;
+    }
+    .sec-head h2 {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: 27px;
+      margin: 0;
+      letter-spacing: -0.012em;
+    }
+    .sec-head .count {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--g500);
+      background: var(--g100);
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+    .sec-intro {
+      font-size: 14.5px;
+      color: var(--g700);
+      max-width: 700px;
+      margin: 0 0 24px 50px;
+    }
+    @media (max-width: 640px) { .sec-intro { margin-left: 0; } }
+
+    /* ── Card grid ────────────────────────────────── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(244px, 1fr));
+      gap: 20px;
+      margin-left: 50px;
+    }
+    @media (max-width: 640px) { .grid { margin-left: 0; } }
+
+    a.card, .card {
+      display: flex;
+      flex-direction: column;
+      background: var(--paper);
+      border: 1.5px solid var(--g300);
+      border-radius: 14px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+      overflow: hidden;
+    }
+    a.card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(20, 20, 19, 0.10);
+      border-color: var(--slate);
+    }
+
+    .thumb {
+      height: 132px;
+      background: var(--g100);
+      border-bottom: 1.5px solid var(--g200);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      transition: background 150ms ease;
+    }
+    a.card:hover .thumb { background: var(--oat); }
+    .thumb svg { width: 100%; height: 100%; overflow: visible; }
+
+    .body { padding: 18px 20px 16px; display: flex; flex-direction: column; flex: 1; }
+    .title {
+      font-family: var(--serif);
+      font-size: 19px;
+      font-weight: 500;
+      line-height: 1.22;
+      color: var(--slate);
+      margin-bottom: 7px;
+      letter-spacing: -0.008em;
+    }
+    .desc {
+      font-size: 13.5px;
+      color: var(--g700);
+      line-height: 1.55;
+      margin-bottom: 16px;
+      flex: 1;
+    }
+    .file {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--g500);
+      border-top: 1px solid var(--g100);
+      padding-top: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .file .arrow { transition: transform 150ms ease; color: var(--g300); }
+    a.card:hover .file { color: var(--clay); }
+    a.card:hover .file .arrow { transform: translateX(3px); color: var(--clay); }
+
+    /* ── SVG class system ─────────────────────────── */
+    .thumb svg .st { stroke: var(--g500); fill: none; stroke-width: 2.5; }
+    .thumb svg .fl { fill: var(--g300); }
+    .thumb svg .cl { fill: var(--clay); }
+    .thumb svg .ol { fill: var(--olive); }
+    .thumb svg .oa { fill: var(--oat); stroke: var(--g500); stroke-width: 2.5; }
+    .thumb svg .sl { fill: var(--slate); }
+    .thumb svg .wh { fill: var(--paper); stroke: var(--g500); stroke-width: 2.5; }
+    .thumb svg .ln { stroke: var(--g500); stroke-width: 2.5; fill: none; stroke-linecap: round; }
+    .thumb svg .lc { stroke: var(--clay); stroke-width: 2.5; fill: none; stroke-linecap: round; }
+    .thumb svg .da { stroke-dasharray: 4 4; }
+    a.card:hover .thumb svg .fl { fill: var(--g500); }
+    a.card:hover .thumb svg .oa { fill: var(--paper); }
+
+    /* ── Bazi pillars (custom) ────────────────────── */
+    .pillars {
+      margin: 0 0 0 50px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 720px) { .pillars { grid-template-columns: repeat(2, 1fr); margin-left: 0; } }
+    .pillar {
+      background: var(--paper);
+      border: 1.5px solid var(--g300);
+      border-radius: 14px;
+      padding: 22px 18px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+    }
+    .pillar.known { border-color: var(--slate); box-shadow: 0 6px 20px rgba(20,20,19,0.06); }
+    .pillar.unknown { background: var(--g100); border-style: dashed; }
+    .pillar .p-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--g500);
+      margin-bottom: 6px;
+    }
+    .pillar .gan, .pillar .zhi {
+      font-family: var(--serif);
+      font-size: 46px;
+      line-height: 1.05;
+      font-weight: 500;
+      color: var(--slate);
+      letter-spacing: 0.02em;
+    }
+    .pillar.known .gan { color: var(--clay); }
+    .pillar .divider {
+      width: 28px;
+      height: 1.5px;
+      background: var(--g300);
+      margin: 4px 0;
+    }
+    .pillar.unknown .gan, .pillar.unknown .zhi { color: var(--g300); font-style: italic; }
+    .pillar .p-note {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--g500);
+      margin-top: 8px;
+    }
+    .pillar.known .p-note { color: var(--olive); }
+    .pillar.unknown .p-note { color: var(--rust); }
+
+    .pillars-meta {
+      margin: 24px 0 0 50px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    @media (max-width: 640px) { .pillars-meta { margin-left: 0; } }
+    .chip {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chip.safe      { background: rgba(120,140,93,0.10); border: 1.5px solid rgba(120,140,93,0.45); color: var(--olive); }
+    .chip.medium    { background: var(--oat); color: var(--g700); border: 1.5px solid var(--g300); }
+    .chip.attention { background: rgba(217,119,87,0.12); border: 1.5px solid rgba(217,119,87,0.55); color: var(--clay-d); }
+
+    /* ── Stat row (info section) ──────────────────── */
+    .statline {
+      margin: 0 0 0 50px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0;
+      border: 1.5px solid var(--g300);
+      border-radius: 14px;
+      background: var(--paper);
+      overflow: hidden;
+    }
+    @media (max-width: 640px) { .statline { margin-left: 0; } }
+    .stat {
+      padding: 22px 22px 20px;
+      border-right: 1px solid var(--g200);
+    }
+    .stat:last-child { border-right: none; }
+    @media (max-width: 720px) { .stat { border-right: none; border-bottom: 1px solid var(--g200); } .stat:last-child { border-bottom: none; } }
+    .stat .k {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--g500);
+      margin-bottom: 8px;
+    }
+    .stat .v {
+      font-family: var(--serif);
+      font-size: 22px;
+      color: var(--slate);
+      letter-spacing: -0.006em;
+      line-height: 1.2;
+    }
+    .stat .vsub {
+      font-size: 12.5px;
+      color: var(--g700);
+      margin-top: 4px;
+    }
+
+    /* ── Footer ───────────────────────────────────── */
+    footer {
+      margin-top: 100px;
+      border-top: 1.5px solid var(--g300);
+      padding-top: 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 20px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: var(--g500);
+    }
+    footer .k { font-family: var(--serif); font-style: italic; color: var(--g700); font-size: 15px; }
+    footer a { color: var(--clay); text-decoration-color: var(--oat); text-underline-offset: 3px; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">个人页 · Personal Page</div>
+        <h1>一九七九，北京的<em>中秋</em>。</h1>
+        <p class="intro">
+          高圆圆，1979 年 10 月 5 日生于北京市丰台区。中国内地影视女演员、模特。这一天恰逢农历八月十五——月圆于燕京之南。
+        </p>
+        <nav class="toc">
+          <a href="#info">公历 &amp; 农历 <span class="n">01</span></a>
+          <a href="#bazi">四柱八字 <span class="n">02</span></a>
+          <a href="#wuxing">生肖与五行 <span class="n">03</span></a>
+        </nav>
+      </div>
+      <div class="hero-fig" aria-hidden="true">
+        <div class="pane lunar">
+          <span class="tag">农历</span>
+          <div class="moon"></div>
+          <div class="moon-label">八月十五</div>
+        </div>
+        <div class="pane greg">
+          <span class="tag">公历</span>
+          <div class="cal-top">1979 · OCT</div>
+          <div class="cal-day">05</div>
+          <div class="cal-sub">Friday</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="info">
+    <div class="sec-head">
+      <span class="idx">01</span>
+      <h2>公历与农历</h2>
+      <span class="count">同一天</span>
+    </div>
+    <p class="sec-intro">
+      一个出生日，两种纪年。公历记录天体绕行，农历记录月相盈亏——这一天，两者交汇在中秋。
+    </p>
+    <div class="statline">
+      <div class="stat">
+        <div class="k">公历 · Gregorian</div>
+        <div class="v">1979-10-05</div>
+        <div class="vsub">星期五</div>
+      </div>
+      <div class="stat">
+        <div class="k">农历 · Lunar</div>
+        <div class="v">己未年 八月十五</div>
+        <div class="vsub">中秋节</div>
+      </div>
+      <div class="stat">
+        <div class="k">出生地 · Birthplace</div>
+        <div class="v">北京 · 丰台区</div>
+        <div class="vsub">京畿之南</div>
+      </div>
+      <div class="stat">
+        <div class="k">职业 · Profession</div>
+        <div class="v">演员 · 模特</div>
+        <div class="vsub">中国内地</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="bazi">
+    <div class="sec-head">
+      <span class="idx">02</span>
+      <h2>四柱八字</h2>
+      <span class="count">2 / 4 可定</span>
+    </div>
+    <p class="sec-intro">
+      八字四柱：年、月、日、时。年柱由出生年定，月柱由节气定——仅凭公开的出生年月，前两柱已可推；日、时两柱须精确的出生时辰，此处保留留白，不作臆测。
+    </p>
+    <div class="pillars">
+      <div class="pillar known">
+        <div class="p-label">年柱 · Year</div>
+        <div class="gan">己</div>
+        <div class="divider"></div>
+        <div class="zhi">未</div>
+        <div class="p-note">已定</div>
+      </div>
+      <div class="pillar known">
+        <div class="p-label">月柱 · Month</div>
+        <div class="gan">癸</div>
+        <div class="divider"></div>
+        <div class="zhi">酉</div>
+        <div class="p-note">已定</div>
+      </div>
+      <div class="pillar unknown">
+        <div class="p-label">日柱 · Day</div>
+        <div class="gan">？</div>
+        <div class="divider"></div>
+        <div class="zhi">？</div>
+        <div class="p-note">需出生日推算</div>
+      </div>
+      <div class="pillar unknown">
+        <div class="p-label">时柱 · Hour</div>
+        <div class="gan">？</div>
+        <div class="divider"></div>
+        <div class="zhi">？</div>
+        <div class="p-note">需出生时辰</div>
+      </div>
+    </div>
+    <div class="pillars-meta">
+      <span class="chip safe">年柱 己未 · 土土同气</span>
+      <span class="chip medium">月柱 癸酉 · 白露后 寒露前</span>
+      <span class="chip attention">日时未定 · 仅作留白</span>
+    </div>
+  </section>
+
+  <section id="wuxing">
+    <div class="sec-head">
+      <span class="idx">03</span>
+      <h2>生肖与五行</h2>
+      <span class="count">3 张片</span>
+    </div>
+    <p class="sec-intro">
+      己未年生人，属羊；年柱天干己土、地支未土，本柱土气厚重。古法另有"纳音"一说，己未配以"天上火"。
+    </p>
+    <div class="grid">
+      <div class="card">
+        <div class="thumb">
+          <svg viewBox="0 0 120 80">
+            <ellipse class="oa" cx="60" cy="50" rx="32" ry="18"/>
+            <circle class="wh" cx="60" cy="32" r="13"/>
+            <path class="ln" d="M50 22 Q46 14 52 12"/>
+            <path class="ln" d="M70 22 Q74 14 68 12"/>
+            <circle class="sl" cx="55" cy="32" r="1.6"/>
+            <circle class="sl" cx="65" cy="32" r="1.6"/>
+            <line class="ln" x1="44" y1="62" x2="42" y2="72"/>
+            <line class="ln" x1="76" y1="62" x2="78" y2="72"/>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="title">生肖 · 羊</div>
+          <div class="desc">己未年所属，十二地支"未"位对应"羊"。性情温润，群居有序。</div>
+          <div class="file"><span>zodiac / 未羊</span><span class="arrow">·</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb">
+          <svg viewBox="0 0 120 80">
+            <rect class="oa" x="22" y="46" width="76" height="20" rx="3"/>
+            <rect class="oa" x="34" y="32" width="52" height="14" rx="3"/>
+            <rect class="cl" x="46" y="20" width="28" height="12" rx="3"/>
+            <line class="ln" x1="14" y1="68" x2="106" y2="68"/>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="title">五行 · 土</div>
+          <div class="desc">年柱天干"己"为阴土，地支"未"亦属土——本柱土气稳厚，喜润不喜燥。</div>
+          <div class="file"><span>wuxing / 土</span><span class="arrow">·</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb">
+          <svg viewBox="0 0 120 80">
+            <circle class="oa" cx="60" cy="44" r="22"/>
+            <path class="lc" d="M48 50 Q54 30 60 50 Q66 30 72 50"/>
+            <line class="ln" x1="60" y1="18" x2="60" y2="10"/>
+            <line class="ln" x1="60" y1="70" x2="60" y2="78"/>
+            <line class="ln" x1="34" y1="44" x2="26" y2="44"/>
+            <line class="ln" x1="86" y1="44" x2="94" y2="44"/>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="title">纳音 · 天上火</div>
+          <div class="desc">古法将六十甲子配五行音律。戊午、己未——天上火，状如日月行天，光照四方。</div>
+          <div class="file"><span>nayin / 天上火</span><span class="arrow">·</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="k">这一页本身，就是一个 .html 文件。</span>
+    <span>Powered by <a href="https://github.com/bbbond123/vivid-html">vivid-html</a>.</span>
+  </footer>
+
+</div>
+</body>
+</html>
