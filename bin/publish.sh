@@ -190,7 +190,10 @@ pathlib.Path(out_path).write_text(tpl)
 PY
 
 # ---- 6. git add / commit / push -------------------------------------
-git add -A
+# Stage only the artifacts publish.sh produced. `git add -A` would silently
+# pick up anything stray in repo root (drafts, .DS_Store, accidental edits to
+# _layouts/ or bin/), polluting the publish history and risking secret leaks.
+git add -- "$SLUG/" index.html
 if git diff --cached --quiet; then
   err "nothing to commit (slug $SLUG already up to date)"
   printf 'URL: %s/%s/\n' "$PAGES_BASE" "$SLUG"
