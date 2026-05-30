@@ -218,6 +218,8 @@
           <a href="#modules">已完成模块 <span class="n">10+</span></a>
           <a href="#core">三大核心 <span class="n">3</span></a>
           <a href="#flow">功能流程 <span class="n">7步</span></a>
+          <a href="#i18n">多语言 <span class="n">↗</span></a>
+          <a href="#region">多地区 <span class="n">↗</span></a>
           <a href="#data">数据现状 <span class="n">↗</span></a>
         </nav>
       </div>
@@ -382,10 +384,168 @@
     </div>
   </section>
 
-  <!-- 04 数据 -->
-  <section id="data">
+  <!-- 04 多语言 -->
+  <section id="i18n">
     <div class="sec-head">
       <span class="idx">04</span>
+      <h2>多语言是如何做的</h2>
+      <span class="count">加语言不改代码</span>
+    </div>
+    <p class="sec-intro">后台与游戏内容彻底多语言化：新增一门语言不改代码、不动表结构，全后台输入框自动跟随。</p>
+    <div class="grid">
+      <div class="card">
+        <div class="thumb">
+          <svg viewBox="0 0 120 80">
+            <rect class="wh" x="14" y="16" width="40" height="14" rx="4"/>
+            <rect class="oa" x="14" y="34" width="40" height="11" rx="4"/>
+            <rect class="fl" x="14" y="49" width="28" height="11" rx="4"/>
+            <rect class="cl" x="66" y="16" width="40" height="14" rx="4"/>
+            <line class="ln" x1="66" y1="40" x2="106" y2="40"/>
+            <line class="ln" x1="66" y1="50" x2="92" y2="50"/>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="title">语言登记表</div>
+          <div class="desc">一行一门语言（BCP 47 码）。</div>
+          <ul>
+            <li>启用/停用、排序（英文置顶）</li>
+            <li>fallback_to：缺翻译时回退链</li>
+            <li>英文为回退根，锁定不可禁用</li>
+          </ul>
+          <div class="file"><span>dict_v2_locales</span><span>✓</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb">
+          <svg viewBox="0 0 120 80">
+            <rect class="wh" x="12" y="14" width="40" height="52" rx="6"/>
+            <line class="ln" x1="20" y1="26" x2="44" y2="26"/>
+            <line class="ln" x1="20" y1="36" x2="44" y2="36"/>
+            <line class="ln" x1="20" y1="46" x2="38" y2="46"/>
+            <path class="lc" d="M60 40 L74 40"/>
+            <path class="lc" d="M68 34 L74 40 L68 46"/>
+            <rect class="cl" x="82" y="34" width="26" height="12" rx="4"/>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="title">文案存多语言字典</div>
+          <div class="desc">一列存一个「语言→文本」映射（JSONB），可任意加语言。</div>
+          <ul>
+            <li>英雄：名字 / 故事 / 台词</li>
+            <li>技能：技能名 / buff 描述</li>
+            <li>取值带回退：当前语言→英文→任意非空，绝不空白</li>
+          </ul>
+          <div class="file"><span>names · skill_name …</span><span>✓</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb">
+          <svg viewBox="0 0 120 80">
+            <rect class="oa" x="12" y="20" width="20" height="12" rx="3"/>
+            <rect class="oa" x="36" y="20" width="20" height="12" rx="3"/>
+            <rect class="cl" x="60" y="20" width="20" height="12" rx="3"/>
+            <rect class="wh" x="12" y="42" width="68" height="22" rx="4"/>
+            <line class="lc" x1="70" y1="14" x2="70" y2="20"/>
+            <line class="ln" x1="20" y1="52" x2="60" y2="52"/>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="title">界面动态联动</div>
+          <div class="desc">语言输入页签由「已启用语言」动态驱动。</div>
+          <ul>
+            <li>在「系统 → 语言」加一门并启用</li>
+            <li>英雄/技能等所有表单自动多出该语言输入框</li>
+            <li>研发零改动</li>
+          </ul>
+          <div class="file"><span>加语言 = 加一行</span><span>✓</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 多地区 -->
+  <section id="region">
+    <div class="sec-head">
+      <span class="idx">05</span>
+      <h2>多地区运营如何扩展</h2>
+      <span class="count">开市场不开发</span>
+    </div>
+    <p class="sec-intro">系统按“地区(市场)”切分运营。新开一个市场是配置动作，不是开发动作——零代码、零表结构变更。</p>
+    <div class="grid">
+      <div class="card">
+        <div class="thumb">
+          <svg viewBox="0 0 120 80">
+            <circle class="wh" cx="40" cy="40" r="24"/>
+            <path class="ln" d="M16 40 H64 M40 16 V64 M22 26 Q40 38 58 26 M22 54 Q40 42 58 54"/>
+            <rect class="cl" x="74" y="30" width="34" height="20" rx="5"/>
+            <line class="ln" x1="80" y1="40" x2="102" y2="40"/>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="title">一键加地区</div>
+          <div class="desc">内置国家目录（日/韩/中/台/港/越/泰/印尼…），下拉选国家即创建。</div>
+          <ul>
+            <li>预置：代码 · 名称 · 国旗 · 建议语言</li>
+            <li>不用手填 6 个字段</li>
+          </ul>
+          <div class="file"><span>regions · country-catalog</span><span>✓</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb">
+          <svg viewBox="0 0 120 80">
+            <rect class="oa" x="14" y="28" width="30" height="24" rx="5"/>
+            <path class="lc" d="M48 40 H68"/>
+            <path class="lc" d="M62 34 L68 40 L62 46"/>
+            <rect class="cl" x="74" y="28" width="30" height="24" rx="5"/>
+            <circle class="wh" cx="29" cy="40" r="6"/>
+            <line class="ln" x1="83" y1="38" x2="95" y2="38"/>
+            <line class="ln" x1="83" y1="44" x2="95" y2="44"/>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="title">地区 ↔ 语言自动联动</div>
+          <div class="desc">添加地区后，若该国有建议语言（韩国 → 韩语），系统自动弹窗提醒去启用。</div>
+          <ul>
+            <li>确保新市场不漏配语言</li>
+            <li>suggested_locale 驱动</li>
+          </ul>
+          <div class="file"><span>checkLocaleReminder</span><span>✓</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb">
+          <svg viewBox="0 0 120 80">
+            <rect class="cl" x="16" y="14" width="24" height="16" rx="4"/>
+            <rect class="wh" x="16" y="36" width="24" height="14" rx="4"/>
+            <rect class="wh" x="16" y="54" width="24" height="14" rx="4"/>
+            <rect class="oa" x="56" y="14" width="48" height="16" rx="4"/>
+            <rect class="fl" x="56" y="36" width="48" height="14" rx="4"/>
+            <rect class="fl" x="56" y="54" width="34" height="14" rx="4"/>
+            <line class="ln" x1="40" y1="22" x2="56" y2="22"/>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="title">内容全部按地区归属</div>
+          <div class="desc">一处控制投放市场，互不干扰。</div>
+          <ul>
+            <li>英雄：region 单列（global = 全市场可见）</li>
+            <li>关卡(missions)：按地区独立维护</li>
+            <li>方案(plans)：一套绑一个地区，关卡数自动联动</li>
+          </ul>
+          <div class="file"><span>region-scoped</span><span>✓</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="sec-intro" style="margin-top:22px;">
+      <strong>开新市场（以韩国为例）：</strong>①选「韩国」一键添加 → ②按提示开启韩语 → ③为 kr 建关卡 → ④建方案(region=kr) → ⑤投放该市场英雄。全程研发不介入。
+    </p>
+  </section>
+
+  <!-- 06 数据 -->
+  <section id="data">
+    <div class="sec-head">
+      <span class="idx">06</span>
       <h2>数据现状</h2>
       <span class="count">佐证完成度</span>
     </div>
